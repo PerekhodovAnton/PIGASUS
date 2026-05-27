@@ -1,4 +1,4 @@
-# Pigasus
+# PIGASUS
 
 ![main.png](./Resources/main.png)
 
