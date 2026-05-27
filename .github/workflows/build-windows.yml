@@ -1,0 +1,57 @@
+name: Build Windows installer
+
+# Builds Pigasus on Windows and packages a Pigasus-Setup.exe.
+# - On every push to main: installer is uploaded as a downloadable Actions artefact (kept ~90 days)
+# - On push of a version tag (e.g. v0.1.0): installer is also attached to a GitHub Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & package
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache JUCE fetch
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: ${{ runner.os }}-juce-8.0.4
+
+      - name: Configure CMake
+        run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build plugin (Release)
+        run: cmake --build build --config Release --parallel
+
+      - name: Compile installer with Inno Setup
+        shell: pwsh
+        run: |
+          $iscc = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            choco install innosetup -y --no-progress
+          }
+          & $iscc installer\pigasus.iss
+
+      - name: Upload installer artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pigasus-Windows-Installer
+          path: installer/Output/Pigasus-*-Setup.exe
+          retention-days: 90
+
+      - name: Attach installer to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: installer/Output/Pigasus-*-Setup.exe
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

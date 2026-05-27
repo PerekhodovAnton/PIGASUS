@@ -37,13 +37,23 @@ The plugin is **automatically installed** to:
 
 Open Ableton / Logic / Reaper / your DAW. **Pigasus** should appear in the plugin list (you may need to rescan).
 
-### Windows
+### Windows (easy — just run the installer)
+
+1. Download the latest **`Pigasus-X.X.X-Setup.exe`** from the [Releases page](https://github.com/PerekhodovAnton/PIGASUS/releases).
+2. Double-click it. Click **Yes** when Windows asks for admin (needed to install into the system VST3 folder), then **Next → Install → Finish**.
+3. Open your DAW → *Rescan plugins* → **Pigasus** should appear in the list.
+
+That's it. The installer puts `Pigasus.vst3` into `C:\Program Files\Common Files\VST3\` and comes with a proper uninstaller in *Add or remove programs*.
+
+> If Windows SmartScreen warns "Windows protected your PC", click **More info → Run anyway**. The installer isn't code-signed yet (signing costs a yearly fee) but is safe — it's built by the public CI workflow in this repo.
+
+### Windows (manual build, for developers)
+
+If you want to build it yourself:
 
 1. Install **Git**: <https://git-scm.com/download/win>
-2. Install **CMake**: <https://cmake.org/download/> (choose the Windows installer, tick *"Add CMake to system PATH"*)
-3. Install **Visual Studio Build Tools 2022**: <https://visualstudio.microsoft.com/downloads/?q=build+tools> — during install, tick the **"Desktop development with C++"** workload.
-
-Open *PowerShell* (or *Command Prompt*) and run:
+2. Install **CMake**: <https://cmake.org/download/> (tick *"Add CMake to system PATH"*)
+3. Install **Visual Studio Build Tools 2022** with the **"Desktop development with C++"** workload: <https://visualstudio.microsoft.com/downloads/?q=build+tools>
 
 ```powershell
 git clone https://github.com/PerekhodovAnton/PIGASUS.git
@@ -52,19 +62,7 @@ cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
 
-When the build finishes, you'll have a freshly-built plugin at:
-
-```
-build\Pigasus_artefacts\Release\VST3\Pigasus.vst3
-```
-
-That `.vst3` is actually a folder. **Copy it** (the whole folder) into the system VST3 directory:
-
-```
-C:\Program Files\Common Files\VST3\
-```
-
-Open your DAW → *Rescan plugins* → **Pigasus** should appear in the list.
+The compiled plugin will be at `build\Pigasus_artefacts\Release\VST3\Pigasus.vst3`. Copy that folder into `C:\Program Files\Common Files\VST3\`.
 
 ---
 
