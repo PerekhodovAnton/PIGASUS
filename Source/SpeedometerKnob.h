@@ -284,16 +284,6 @@ namespace redline
                 }
             }
 
-            // -------- A tiny stamp at the lower edge of the face --------
-            {
-                g.setColour (theme::inkLow);
-                g.setFont (theme::caption (r * 0.065f));
-                g.drawText ("MODEL  01",
-                            juce::Rectangle<int> ((int) (cx - r * 0.5f),
-                                                  (int) (cy + r * 0.78f),
-                                                  (int) (r * 1.0f), 12),
-                            juce::Justification::centred, false);
-            }
         }
 
         void mouseDown (const juce::MouseEvent& e) override

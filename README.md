@@ -1,6 +1,8 @@
 # Pigasus
 
-A saturator + brick-wall limiter VST3 / AU audio plugin, built with JUCE.
+![main.png](./Resources/main.png)
+
+A saturator + brick-wall limiter VST3 / AU audio plugin, built with help of Claude Code and the JUCE Framework.
 
 Push the **Drive** knob and the plugin cooks the signal harder — auto-makeup gain keeps the perceived loudness (LUFS) roughly constant while peaks stay tamed. Four saturation flavors (Tube, Tape, Diode, Hard). A rock-pig mascot in the gauge gets progressively angrier the harder you push, with flames erupting from the gauge ring at high drive.
 
