@@ -7,3 +7,7 @@ cmake-build-*/
 xcuserdata/
 *.xcuserstate
 *.user
+
+# Installer build outputs
+installer/Output/
+installer/macos-staging/

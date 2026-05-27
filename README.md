@@ -16,12 +16,21 @@ On Windows you also need **Visual Studio Build Tools** (Desktop development with
 
 The first build downloads JUCE automatically (~150 MB) — after that, builds are fast.
 
-### macOS
+### macOS (easy — just run the installer)
 
-Open Terminal and run:
+1. Download the latest **`Pigasus-X.X.X.dmg`** from the [Releases page](https://github.com/PerekhodovAnton/PIGASUS/releases).
+2. Double-click the `.dmg`, then double-click **Pigasus Installer.pkg** inside it.
+3. Click through the installer (admin password needed once). Both VST3 and AU formats install system-wide.
+4. Open Logic / Ableton / Reaper / your DAW → *Rescan plugins* → **Pigasus** should appear.
+
+> If macOS blocks the installer with *"Apple could not verify Pigasus is free of malware"*, right-click the `.pkg` inside the DMG → **Open** → click **Open** again. The installer isn't notarized yet (notarization needs a paid Apple Developer account) but is safe — it's built by the public CI workflow in this repo.
+
+### macOS (manual build, for developers)
+
+If you want to build it yourself:
 
 ```sh
-# One-time install of build tools (skip if you already have them)
+# One-time install of build tools
 xcode-select --install
 brew install cmake git
 
@@ -32,12 +41,12 @@ cmake -B build -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release -j
 ```
 
-The plugin is **automatically installed** to:
+CMake auto-installs the freshly built plugin to `~/Library/Audio/Plug-Ins/VST3/` and `~/Library/Audio/Plug-Ins/Components/`. To package a `.dmg`, also run:
 
-- `~/Library/Audio/Plug-Ins/VST3/Pigasus.vst3`
-- `~/Library/Audio/Plug-Ins/Components/Pigasus.component` (AU)
-
-Open Ableton / Logic / Reaper / your DAW. **Pigasus** should appear in the plugin list (you may need to rescan).
+```sh
+./installer/build-macos-dmg.sh 0.1.1 build
+# → installer/Output/Pigasus-0.1.1.dmg
+```
 
 ### Windows (easy — just run the installer)
 

@@ -1,0 +1,66 @@
+name: Build macOS DMG
+
+# Builds Pigasus on macOS and packages a Pigasus-X.Y.Z.dmg containing a
+# double-click installer .pkg.
+# - On every push to main: .dmg uploaded as a downloadable Actions artefact
+# - On a v* tag: .dmg attached to a GitHub Release
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build & package
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version from tag
+        id: version
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            echo "value=${GITHUB_REF#refs/tags/v}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=0.1.0-dev" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Cache JUCE fetch
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: ${{ runner.os }}-juce-8.0.4
+
+      - name: Configure CMake (universal arm64 + x86_64)
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+
+      - name: Build plugin (Release)
+        run: cmake --build build --config Release --parallel
+
+      - name: Build .dmg
+        run: |
+          chmod +x installer/build-macos-dmg.sh
+          ./installer/build-macos-dmg.sh "${{ steps.version.outputs.value }}" build
+
+      - name: Upload DMG artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pigasus-macOS-DMG
+          path: installer/Output/Pigasus-*.dmg
+          retention-days: 90
+
+      - name: Attach .dmg to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: installer/Output/Pigasus-*.dmg
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
